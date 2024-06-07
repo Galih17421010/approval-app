@@ -11,9 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('request_statuses', function (Blueprint $table) {
+        Schema::create('status_pengajuans', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('request_id')->constrained()->onDelete('cascade');
+            $table->foreignId('pengajuan_id')->constrained()->onDelete('cascade');
             $table->enum('status', ['Pending', 'Approved', 'Rejected']);
             $table->text('reason')->nullable();
             $table->foreignId('action_by')->constrained('users')->onDelete('cascade');
@@ -26,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('request_statuses');
+        Schema::dropIfExists('status_pengajuans');
     }
 };

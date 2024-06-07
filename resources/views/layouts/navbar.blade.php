@@ -1,48 +1,33 @@
 
   <!-- Navbar -->
-  <nav class="main-header navbar navbar-expand navbar-light">
-    <!-- Left navbar links -->
-    <ul class="navbar-nav">
-      <li class="nav-item">
-        <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
-      </li>
-    </ul>
-
-    <!-- Right navbar links -->
-    <ul class="navbar-nav ml-auto">
-        <!-- Notifications Dropdown Menu -->
-              
-        <li class="nav-item dropdown">
-            <a class="nav-link" data-toggle="dropdown" href="#">
-                <div class="image">
-                    <img src="{{asset('assets/img/user2-160x160.jpg')}}" class="img-size-32 img-circle mr-2" alt="User Image">
-                    {{ Auth::user()->name }}
-                </div>
-            </a>
-            <div class="dropdown-menu dropdown-menu-sm dropdown-menu-right">
-                <a class="dropdown-item" href="?page=profil">
-                    <span class="fa fa-user"></span> My Account
-                </a>
-                <div class="dropdown-divider"></div>
-                <a class="dropdown-item" href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                    <span class="fas fa-power-off"></span> Logout
-                </a>
-                <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
-                    @csrf
-                </form>
-            </div>
-        </li>
-        
-        <!-- Theme -->
-        <li class="nav-item">
-            <div class="theme-switch-wrapper nav-link">
-              <label class="theme-switch" for="checkbox">
-                <input type="checkbox" id="checkbox" />
-                <span class="slider round"></span>
-              </label>
-            </div>
-        </li>
-        
-    </ul>
+  <nav class="main-header navbar navbar-expand-md navbar-dark">
+    <div class="container">
+      <span class="navbar-brand brand-text font-weight-light">
+        <i class="fa fa-globe"></i>
+        {{ config('app.name') }} - @yield('title')
+      </span>
+      <!-- Right navbar links -->
+      <ul class="navbar-nav ml-auto">
+          <!-- Notifications Dropdown Menu -->
+          @guest
+          
+          @else     
+          <li class="nav-item dropdown">
+              <a class="nav-link" data-toggle="dropdown" href="#">
+                      {{ Auth::user()->name }}
+              </a>
+              <div class="dropdown-menu dropdown-menu-sm dropdown-menu-right">
+                  {{-- <div class="dropdown-divider"></div> --}}
+                  <a class="dropdown-item" href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                      <span class="fas fa-power-off"></span> Logout
+                  </a>
+                  <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                      @csrf
+                  </form>
+              </div>
+          </li>
+          @endguest
+      </ul>
+    </div>
   </nav>
   <!-- /.navbar -->

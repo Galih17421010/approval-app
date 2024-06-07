@@ -11,14 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('requests', function (Blueprint $table) {
+        Schema::create('pengajuans', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->string('item_name');
-            $table->text('item_description')->nullable();
-            $table->integer('quantity');
-            $table->decimal('unit_price', 10, 2);
-            $table->decimal('total_price', 12, 2)->storedAs('quantity * unit_price');
+            $table->string('nama_barang');
+            $table->text('alasan_pengajuan')->nullable();
+            $table->integer('qty');
+            $table->integer('harga_satuan');
+            $table->integer('total_harga')->storedAs('qty * harga_satuan');
             $table->enum('status', ['Pending', 'Approved', 'Rejected', 'Paid'])->default('Pending');
             $table->timestamps();
         });
@@ -29,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('requests');
+        Schema::dropIfExists('pengajuans');
     }
 };

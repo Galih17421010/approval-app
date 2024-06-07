@@ -5,23 +5,25 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
-    <title>{{ config('app.name', 'Laravel') }}</title>
+    <title>{{ config('app.name', 'Laravel') }} - @yield('title')</title>
+     <!-- CSRF Token -->
+     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    @include('layouts.header')
+   @include('layouts.header')
 
 </head>
 
-<body class="hold-transition sidebar-mini layout-footer-fixed layout-fixed">
+<body class="hold-transition layout-top-nav">
 <div class="wrapper">
 
     @include('layouts.navbar')
 
-    @include('layouts.menubar')
-
-    {{-- CONTEN  --}}
-    @yield('content')
-        
-
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        @yield('content')
+    </div>
+    <!-- /.content-wrapper -->
+    
 
     @include('layouts.footer')
 

@@ -11,10 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('transfer_proofs', function (Blueprint $table) {
+        Schema::create('bukti_transfers', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('request_id')->constrained()->onDelete('cascade');
-            $table->string('proof_document');
+            $table->foreignId('pengajuan_id')->constrained()->onDelete('cascade');
+            $table->string('transfer_document');
             $table->timestamp('uploaded_at')->useCurrent();
         });
     }
@@ -24,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('transfer_proofs');
+        Schema::dropIfExists('bukti_transfers');
     }
 };
