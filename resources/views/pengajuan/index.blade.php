@@ -13,48 +13,20 @@
               Buat Pengajuan
            </button>
        </div>
-       
      </div>
      <b><hr></b>
-     
    </div>
  </div>
  <!-- /.content-header -->
- 
+
  <!-- Main content -->
  <div class="content">
    <div class="container">
      <div class="row">
        <div class="col-12">
           
-           <div id="cardContent">@csrf
-               {{-- <div class="card card-primary card-outline">
-                   <div class="card-header">
-                       <h5 class="card-title m-0">Pengajuan - </h5>
-                       <div class="card-tools">
-                           <button type="button" class="btn btn-tool dropdown-toggle" data-toggle="dropdown">
-                               <i class="fas fa-cog"></i>
-                           </button>
-                           <div class="dropdown-menu dropdown-menu-right" role="menu">
-                               <a href="" class="dropdown-item"><i class="fa fa-edit"></i> Edit</a>
-                               <a href="" class="dropdown-item"><i class="fa fa-trash"></i> Delete</a>
-                           </div>
-                       </div>
-                    </div>
-                   <div class="card-body">
-                   
-                   <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-                   
-                   </div>
-                   <div class="card-footer">
-                       <a href="" class="btn btn-primary float-right">Action</a>
-                       <div>
-                       </div>
-                       <h6 class="text-success"><i class="far fa-check-circle"></i> Diajukan 12 Juni 2024</span>
-                   </div>
-                </div> --}}
-           </div>
-
+          <table class="table table-borderless" id="tableMaster"></table>
+          
        </div>
      </div>
    </div>
@@ -109,6 +81,7 @@
 
 @section('script')
 <script type="text/javascript">
+
 $(document).ready( function () {
     $.ajaxSetup({
     headers: {
@@ -116,22 +89,30 @@ $(document).ready( function () {
         }
     });
 
-    $(function(){
-      const cards = $('#cardContent', function(){
-        $.ajax({
-          url: "{{ url('/data-pengajuan')}}",
-          type: 'GET',
-          dataType:"JSON",
-          processData : false,
-          contentType:false,
-          success: function(data) {
-            console.log(data);
-            $('#cardContent').html(data.html);
-          }
-        })
-      });
-    
-    
+    $(document).ready(function(){
+        let table =  $('#tableMaster').DataTable({
+          processing: true,
+          serverSide: true,
+          // responsive: true,
+          ajax: "{{url('/data')}}",
+          order:[['id','DESC']],
+          columns: [{data: 'nama_barang'},
+            {data: 'data', "defaultContent": ""}
+          ],
+            language: {
+            emptyTable: "Beluam Ada Data Pengajuan",
+            search: "Cari Data Pengajuan : ",
+            lengthMenu: " _MENU_ Data Pengajuan",
+            zeroRecords:    "Tidak Ada Data Yang Ditemukan",
+          },
+          columnDefs: [
+              { target: 0, visible: false}
+          ],
+          // paging: false,
+          // scrollCollapse: true,
+          // scrollY: '65vh'
+      })
+        
       $('#formPengajuan').submit(function(e) {
         e.preventDefault();
           let form = $('#formPengajuan')[0];
@@ -152,7 +133,7 @@ $(document).ready( function () {
                         timer: 2000
             });
             $("#formPengajuan")[0].reset();
-            cards.draw();
+            table.ajax.reload();
           },
           error: function(data){
             console.log(data);
