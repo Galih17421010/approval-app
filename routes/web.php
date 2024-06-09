@@ -12,5 +12,8 @@ Auth::routes();
 Route::get('/', [PengajuanController::class, 'index']);
 Route::get('/data', [PengajuanController::class, 'table']);
 Route::post('/ajukan', [PengajuanController::class, 'store']);
+Route::get('/edit/{id}', [PengajuanController::class, 'edit']);
+Route::put('/update/{id}', [PengajuanController::class, 'update']);
+Route::delete('/delete/{id}', [PengajuanController::class, 'destroy']);
 
 

@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Pengajuan;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\Facades\DataTables;
 
 class PengajuanController extends Controller
@@ -14,8 +16,7 @@ class PengajuanController extends Controller
         $this->middleware('auth');
     }
     
-    public function index()
-    {
+    public function index(){
         return view('pengajuan.index');
     }
 
@@ -31,34 +32,76 @@ class PengajuanController extends Controller
 
         $pengajuan->save();
 
-        // $html=view('load',compact($pengajuan))->render();
 
         return response()->json([
-            // 'html' => $html,
             'success' => true,
             'message' => 'Barang Berhasil Diajukan!',
             'data'    => $pengajuan  
         ]);
     }
-    
-    public function table(Request $request)
+
+    public function detail(string $id)
     {
+        $pengajuan = Pengajuan::find($id);
+        return response()->json(['pengajuan' => $pengajuan]);
+    }
 
-            $data = Pengajuan::orderBy('id','DESC')->get();
+    public function edit(string $id)
+    {
+        $data = Pengajuan::find($id);
+        return response()->json(['data' => $data]);
+    }
 
-            return DataTables::of($data)
-                    ->addColumn('data', function($d){
-                            $btn = '<div class="card card-primary card-outline" id='.$d->id.'>
+    public function update(Request $request, string $id)
+    {
+        $pengajuan = Pengajuan::find($id);
+        $pengajuan->nama_barang = $request->nama_barang;
+        $pengajuan->alasan_pengajuan = $request->alasan_pengajuan;
+        $pengajuan->qty = $request->qty;
+        $pengajuan->harga_satuan = $request->harga_satuan;
+        $pengajuan->update();
+        return response()->json(['status' => "success", 'message' => 'Barang Berhasil Diupdate!']);
+    }
+    
+    public function destroy(string $id)
+    {
+        Pengajuan::destroy($id);
+        return response()->json(['status' => "success"]);
+    }
+    
+    public function table()
+    {
+        $data = Pengajuan::orderBy('id','DESC')->get();
+        return DataTables::of($data)
+            ->addColumn('data', function($d){
+                if (Auth::user()->role == 'Manager') {
+                    $button = '<button id="reject-manager" class="btn btn-sm btn-danger">Reject</button>&nbsp;
+                                <button id="approve-manager" class="btn btn-sm btn-success">Approve</button>';
+                }elseif (Auth::user()->role == 'Finance') {
+                    $button = '<button id="reject-finance" class="btn btn-sm btn-danger">Reject</button>&nbsp;
+                                <button id="approve-finance" class="btn btn-sm btn-success">Approve</button>';
+                }else{
+                    $button = '';
+                }
+
+                if ($d->user_id == Auth::user()->id && $d->status == 'Pending') {
+                    $dropdown = '';
+                }else{
+                    $dropdown = 'disabled';
+                }
+
+                $card = '<div class="card card-primary card-outline" id='.$d->id.'>
                             <div class="card-header">
                                 <h5 class="card-title m-0">Pengajuan - '.$d->nama_barang.'</h5>
                                 <div class="card-tools">
-                                  
-                                    <button type="button" class="btn btn-tool dropdown-toggle" data-toggle="dropdown">
+                                    <button type="button" class="btn btn-tool dropdown-toggle '.$dropdown.'" data-toggle="dropdown">
                                         <i class="fas fa-cog"></i>
                                     </button>
                                     <div class="dropdown-menu dropdown-menu-right" role="menu">
-                                      <button id="btn-edit" class="dropdown-item"><i class="fa fa-edit"></i> Edit</button>
-                                      <button id="btn-delete" class="dropdown-item"><i class="fa fa-trash"></i> Delete</button>
+                                    <button id="btn-edit" data-id="'.$d->id.'" class="dropdown-item" data-toggle="modal" data-target="#editPengajuan" data-keyboard="false" data-backdrop="static">
+                                        <i class="fa fa-edit"></i> Edit
+                                    </button>
+                                    <button id="btn-delete" data-id="'.$d->id.'" class="dropdown-item"><i class="fa fa-trash"></i> Delete</button>
                                     </div>
                                 </div>
                             </div>
@@ -74,40 +117,20 @@ class PengajuanController extends Controller
                                     </div>
                                 </div>
                                 <center>
-                                    <button class="btn btn-sm btn-block btn-light" id="btn-detail">
+                                    <button class="btn btn-sm btn-block btn-light" id="btn-detail" data-id="'.$d->id.'">
                                         <span class="text-success"><i class="far fa-check-circle"></i> Menunggu Persetujuan Manager</span>
                                     </button> 
                                 </center>
                             </div>
                             <div class="card-footer">    
-                                  <center>
-                                    <button id="reject-manager" class="btn btn-sm btn-danger">Reject</button>&nbsp;
-                                    <button id="approve-manager" class="btn btn-sm btn-success">Approve</button> 
-                                    <button id="reject-finance" class="btn btn-sm btn-danger">Reject</button>&nbsp;
-                                    <button id="approve-finance" class="btn btn-sm btn-success">Approve</button>  
-                                  </center>
+                                <center>
+                                    '.$button.'
+                                </center>
                             </div>
-                          </div>';   
-      
-                            return $btn;
-                    })
-                    ->rawColumns(['data'])
-                    ->make(true);
-    }
-
-    public function edit(string $id)
-    {
-        //
-    }
-
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    
-    public function destroy(string $id)
-    {
-        //
+                        </div>';   
+            return $card;
+            })
+            ->rawColumns(['data'])
+            ->make(true);
     }
 }
