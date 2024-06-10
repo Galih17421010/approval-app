@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Manager;
 use App\Models\Pengajuan;
-use App\Models\User;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
 
 class PengajuanController extends Controller
@@ -71,20 +71,29 @@ class PengajuanController extends Controller
     
     public function table()
     {
-        $data = Pengajuan::orderBy('id','DESC')->get();
+        $data = DB::table('pengajuans')->select('*','pengajuans.id as id')
+                    ->leftJoin('managers','pengajuans.id','=','managers.pengajuan_id')
+                    ->leftJoin('finances','pengajuans.id','=','finances.pengajuan_finance_id')
+                    ->orderBy('pengajuans.id','DESC')->get();
+        
         return DataTables::of($data)
             ->addColumn('data', function($d){
-                if (Auth::user()->role == 'Manager') {
-                    $button = '<button id="reject-manager" class="btn btn-sm btn-danger">Reject</button>&nbsp;
-                                <button id="approve-manager" class="btn btn-sm btn-success">Approve</button>';
-                }elseif (Auth::user()->role == 'Finance') {
-                    $button = '<button id="reject-finance" class="btn btn-sm btn-danger">Reject</button>&nbsp;
-                                <button id="approve-finance" class="btn btn-sm btn-success">Approve</button>';
+                if (Auth::user()->role == 'Manager' && $d->manager == null) {
+                    $button = '<button id="reject-manager" data-id="'.$d->id.'" da class="btn btn-sm btn-danger">Reject</button>&nbsp;
+                                <button id="approve-manager" data-id="'.$d->id.'" class="btn btn-sm btn-success">Approve</button>';
+                    
+                }elseif (Auth::user()->role == 'Finance' && $d->manager == 'Approved' && $d->finance == null) {
+                    $button = '<button id="reject-finance" data-id="'.$d->id.'" class="btn btn-sm btn-danger">Reject</button>&nbsp;
+                                <button id="approve-finance" data-id="'.$d->id.'" class="btn btn-sm btn-success">Approve</button>';
+                }elseif($d->finance == 'Approved'){
+                    $button = '<button id="bukti-finance" data-id="'.$d->id.'" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#modalBukti" data-keyboard="false" data-backdrop="static">
+                                Upload Bukti Pembayaran
+                                </button>';
                 }else{
                     $button = '';
                 }
 
-                if ($d->user_id == Auth::user()->id && $d->status == 'Pending') {
+                if ($d->user_id == Auth::user()->id && $d->manager == null) {
                     $dropdown = '';
                 }else{
                     $dropdown = 'disabled';
@@ -117,14 +126,14 @@ class PengajuanController extends Controller
                                     </div>
                                 </div>
                                 <center>
-                                    <button class="btn btn-sm btn-block btn-light" id="btn-detail" data-id="'.$d->id.'">
+                                    <button class="btn btn-sm btn-block btn-light" id="btn-detail" data-id="'.$d->id.'" data-toggle="modal" data-target="#detailPengajuan" data-keyboard="false" data-backdrop="static">
                                         <span class="text-success"><i class="far fa-check-circle"></i> Menunggu Persetujuan Manager</span>
                                     </button> 
                                 </center>
                             </div>
                             <div class="card-footer">    
                                 <center>
-                                    '.$button.'
+                                    '.$button.' 
                                 </center>
                             </div>
                         </div>';   
@@ -132,5 +141,9 @@ class PengajuanController extends Controller
             })
             ->rawColumns(['data'])
             ->make(true);
+    }
+
+    public function upload(Request $request, $id){
+        
     }
 }

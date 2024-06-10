@@ -11,13 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('status_pengajuans', function (Blueprint $table) {
+        Schema::create('finances', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('pengajuan_id')->constrained()->onDelete('cascade');
-            $table->enum('status', ['Pending', 'Approved', 'Rejected']);
-            $table->text('reason')->nullable();
+            $table->foreignId('pengajuan_finance_id')->constrained()->onDelete('cascade');
+            $table->enum('finance', ['Approved', 'Rejected']);
+            $table->text('alasan_finance')->nullable();
+            $table->string('bukti_transfer')->nullable();
             $table->foreignId('action_by')->constrained('users')->onDelete('cascade');
             $table->timestamp('action_at')->useCurrent();
+            $table->timestamps();
         });
     }
 
@@ -26,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('status_pengajuans');
+        Schema::dropIfExists('finances');
     }
 };

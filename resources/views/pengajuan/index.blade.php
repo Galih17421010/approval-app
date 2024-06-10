@@ -1,5 +1,98 @@
 @extends('app')
 @section('title', 'Dashboard')
+@section('css')
+<style>
+.vertical-timeline {
+    width: 100%;
+    position: relative;
+    padding: 1.5rem 0 1rem;
+}
+
+.vertical-timeline::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 67px;
+    height: 100%;
+    width: 4px;
+    background: #e9ecef;
+    border-radius: .25rem;
+}
+
+.vertical-timeline-element {
+    position: relative;
+    margin: 0 0 1rem;
+}
+
+.vertical-timeline--animate .vertical-timeline-element-icon.bounce-in {
+    visibility: visible;
+    animation: cd-bounce-1 .8s;
+}
+.vertical-timeline-element-icon {
+    position: absolute;
+    top: 0;
+    left: 60px;
+}
+
+.vertical-timeline-element-icon .badge-dot-xl {
+    box-shadow: 0 0 0 5px #fff;
+}
+
+.badge-dot-xl {
+    width: 18px;
+    height: 18px;
+    position: relative;
+}
+
+.badge:empty {
+    display: none;
+}
+
+.badge-dot-xl::before {
+    content: '';
+    width: 10px;
+    height: 10px;
+    border-radius: .25rem;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    margin: -5px 0 0 -5px;
+    background: #fff;
+}
+
+.vertical-timeline-element-content {
+    position: relative;
+    margin-left: 90px;
+    font-size: .8rem;
+}
+
+.vertical-timeline-element-content .timeline-title {
+    font-size: .8rem;
+    text-transform: uppercase;
+    margin: 0 0 .5rem;
+    padding: 2px 0 0;
+    font-weight: bold;
+}
+
+.vertical-timeline-element-content .vertical-timeline-element-date {
+    display: block;
+    position: absolute;
+    left: -90px;
+    top: 0;
+    padding-right: 10px;
+    text-align: right;
+    color: #adb5bd;
+    font-size: .7619rem;
+    white-space: nowrap;
+}
+
+.vertical-timeline-element-content:after {
+    content: "";
+    display: table;
+    clear: both;
+}
+</style>
+@endsection
 @section('content')
 <!-- Content Header (Page header) -->
 <div class="content-header">
@@ -32,7 +125,7 @@
    </div>
  </div>
 
-{{-- modal create --}}
+{{-- modal Create --}}
 <div class="modal fade" id="createPengajuan">
     <div class="modal-dialog modal-xl">
       <div class="modal-content">
@@ -125,6 +218,119 @@
   </div>
 </div>
 
+{{-- modal Detail --}}
+<div class="modal fade" id="detailPengajuan">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title" id="judulForm">Tracking Pengajuan Barang</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+          <input type="hidden" name="id" id="id">
+          <div class="row">
+            <div class="col-md-10 ml-auto">
+
+              <div class="vertical-timeline vertical-timeline--animate vertical-timeline--one-column">
+                <div class="vertical-timeline-item vertical-timeline-element">
+                  <div>
+                      <span class="vertical-timeline-element-icon bounce-in">
+                          <i class="badge badge-dot badge-dot-xl badge-success"> </i>
+                      </span>
+                      <div class="vertical-timeline-element-content bounce-in">
+                          <h4 class="timeline-title text-success">Disetujui Oleh Finance</h4>
+                          <p>Pengajuan disetujui oleh Finance pada <b class="text-success"> 13-08-2024</b><br>
+                            <a href="javascript:void(0);" data-abc="true">Lihat Bukti Pembayaran</a></p>
+                          <span class="vertical-timeline-element-date">6:00 WIB</span>
+                      </div>
+                  </div>
+                </div>
+                <div class="vertical-timeline-item vertical-timeline-element">
+                    <div>
+                        <span class="vertical-timeline-element-icon bounce-in">
+                            <i class="badge badge-dot badge-dot-xl badge-danger"> </i>
+                        </span>
+                        <div class="vertical-timeline-element-content bounce-in">
+                            <h4 class="timeline-title text-danger">Ditolak oleh finance</h4>
+                            <p>Pengajuan ditolak oleh Finance pada <b class="text-danger"> 10-08-2024</b><br>
+                                Karena bla-bla</p>
+                            <span class="vertical-timeline-element-date">6:00 WIB</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="vertical-timeline-item vertical-timeline-element">
+                    <div>
+                        <span class="vertical-timeline-element-icon bounce-in">
+                            <i class="badge badge-dot badge-dot-xl badge-success"> </i>
+                        </span>
+                        <div class="vertical-timeline-element-content bounce-in">
+                            <h4 class="timeline-title text-success">Disetujui Oleh Manager</h4>
+                            <p>Pengajuan Disetujui Oleh Manager Pada<b class="text-success"> 10-08-2024</b></p>
+                            <span class="vertical-timeline-element-date">9:00 WIB</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="vertical-timeline-item vertical-timeline-element">
+                    <div>
+                        <span class="vertical-timeline-element-icon bounce-in">
+                            <i class="badge badge-dot badge-dot-xl badge-info"> </i>
+                        </span>
+                        <div class="vertical-timeline-element-content bounce-in">
+                            <h4 class="timeline-title text-info">Menunggu Persetujuan Manager</h4>
+                            <p></p>
+                            <span class="vertical-timeline-element-date">10:30 WIb</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="vertical-timeline-item vertical-timeline-element">
+                    
+                        <span class="vertical-timeline-element-icon bounce-in">
+                            <i class="badge badge-dot badge-dot-xl badge-success"> </i>
+                        </span>
+                        <div class="vertical-timeline-element-content bounce-in">
+                            <h4 class="timeline-title text-success">Pengajuan Dibuat</h4>
+                            <p>Diajukan oleh Officer<b class="text-success"> 09-08-2024</b></p>
+                            <span class="vertical-timeline-element-date">12:25 WIB</span>
+                        </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+      </div>
+      <div class="modal-footer justify-content-center">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>
+      </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+{{-- modal bukti transfer  --}}
+<div class="modal fade" id="modalBukti">
+  <div class="modal-dialog modal-m modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="text-center">Input Bukti Pembayaran</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form id="formInputBukti" method="POST" enctype="multipart/form-data"> @csrf
+        <input type="hidden" name="id" id="id">
+      <div class="modal-body">
+        <input type="file" class="form-control" name="bukti_transfer" id="bukti_transfer" required>
+        <img id="preview" src="#" alt="Preview" style="display: none; max-width: 100%; margin-top: 10px;">
+      </div>
+      <div class="modal-footer justify-content-center">
+        <button type="submit" class="btn btn-primary">Submit</button>
+      </div>
+      </form>
+    </div>
+  </div>
+</div>
 @endsection
 
 @section('script')
@@ -277,7 +483,214 @@ $(document).ready( function () {
         table.ajax.reload();
       });
 
+      // reject manager 
+      $(document).on("click", "#reject-manager", function(e) {
+        e.preventDefault();
+        id = $(this).data('id');
+            Swal.fire({
+            title: "Berikan Alasan",
+            input: "textarea",
+            inputValidator: (value) => {
+              return !value && 'Anda perlu memberikan alasan penolakan'
+            },
+            inputAttributes: {
+              name: "alasan_manager",
+            },
+            showCancelButton: true,
+            confirmButtonText: "Submit",
+          }).then((result) => {
+            if (result.value) {
+              $.ajax({
+                  url: "reject/"+id,
+                  type: "POST",
+                  data: {
+                    id, 
+                    alasan_manager: result.value
+                  },
+                  success: function(response) {
+                    Swal.fire({
+                      title: "Rejected",
+                      text: "Anda berhasil menolak pengajuan ini.",
+                      icon: "success"
+                    });
+                    table.ajax.reload();
+                    console.log(response);
+                  },
+                    error: function(data){
+                    console.log(data);
+                  }
+              })
+            }
+          });
+
+      });
+
+      //approve manager
+      $(document).on("click", "#approve-manager", function(e) {
+        e.preventDefault();
+        id = $(this).data('id');
+        Swal.fire({
+          title: "Apakah anda yakin?",
+          text: "Anda akan menyetujui pengajuan ini",
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonColor: "#67c725",
+          cancelButtonColor: "#d33",
+          confirmButtonText: "Ya, Setujui",
+          showLoaderOnConfirm: true,
+          cancelButtonText: "Batalkan"
+        }).then((result) => {
+          if (result.isConfirmed) {
+            $.ajax({
+                    url: "approve/"+id,
+                    type: "POST",
+                    data: {id},
+                    success: function(response) {
+                    Swal.fire({
+                      title: "Menyetujui",
+                      text: "Anda telah menyetujui pengajuan ini.",
+                      icon: "success"
+                    });
+                    table.ajax.reload();
+                    console.log(response);
+                  },
+                    error: function(data){
+                    console.log(data);
+                  }
+            });
+          }
+        });
+      });
+
+      // reject finance 
+      $(document).on("click", "#reject-finance", function(e) {
+        e.preventDefault();
+        id = $(this).data('id');
+            Swal.fire({
+            title: "Berikan Alasan",
+            input: "textarea",
+            inputValidator: (value) => {
+              return !value && 'Anda perlu memberikan alasan penolakan'
+            },
+            inputAttributes: {
+              name: "alasan_finance",
+            },
+            showCancelButton: true,
+            confirmButtonText: "Submit",
+          }).then((result) => {
+            if (result.value) {
+              $.ajax({
+                  url: "finance-reject/"+id,
+                  type: "POST",
+                  data: {
+                    id, 
+                    alasan_finance: result.value
+                  },
+                  success: function(response) {
+                    Swal.fire({
+                      title: "Rejected",
+                      text: "Anda berhasil menolak pengajuan ini.",
+                      icon: "success"
+                    });
+                    table.ajax.reload();
+                    console.log(response);
+                  },
+                    error: function(data){
+                    console.log(data);
+                  }
+              })
+            }
+          });
+
+      });
+
+      //approve finance
+      $(document).on("click", "#approve-finance", function(e) {
+        e.preventDefault();
+        id = $(this).data('id');
+        Swal.fire({
+          title: "Apakah anda yakin?",
+          text: "Anda akan menyetujui pengajuan ini",
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonColor: "#67c725",
+          cancelButtonColor: "#d33",
+          confirmButtonText: "Ya, Setujui",
+          showLoaderOnConfirm: true,
+          cancelButtonText: "Batalkan"
+        }).then((result) => {
+          if (result.isConfirmed) {
+            $.ajax({
+                    url: "finance-approve/"+id,
+                    type: "POST",
+                    data: {id},
+                    success: function(response) {
+                    Swal.fire({
+                      title: "Menyetujui",
+                      text: "Anda telah menyetujui pengajuan ini.",
+                      icon: "success"
+                    });
+                    table.ajax.reload();
+                    console.log(response);
+                  },
+                    error: function(data){
+                    console.log(data);
+                  }
+            });
+          }
+        });
+      });
+
+      // bukti transfer Finance
+      $(document).on("click", "#bukti-finance", function(e) {
+        e.preventDefault();
+        id = $(this).data('id');
+        
+      });
+
+      // $(document).ready(function() {
+      //   $('#bukti_transfer').change(function() {
+      //       previewImage(this);
+      //   });
+      // });
+
+      //   function previewImage(input) {
+      //       var preview = $('#preview')[0];
+      //       if (input.files && input.files[0]) {
+      //           var reader = new FileReader();
+      //           reader.onload = function (e) {
+      //               preview.src = e.target.result;
+      //               preview.style.display = 'block';
+      //           }
+      //           reader.readAsDataURL(input.files[0]);
+      //       }
+      //   }
       
+      $('#formInputBukti').submit(function(e){
+        e.preventDefault();
+        // id = $(this).data('id');
+        $.ajax({
+          url: "finance-bukti/"+id,
+          method: 'POST',
+          data: {
+                  bukti_transfer: $('#bukti_transfer').val(),
+                },
+          success: function(response) {
+            $("#formInputBukti").modal('hide');
+            Swal.fire({ type: 'success',
+                        icon: 'success',
+                        title: `${response.message}`,
+                        showConfirmButton: false,
+                        timer: 2000
+            });
+            table.ajax.reload();
+          },
+          error: function(data){
+            console.log(data);
+          }
+        });
+      });
+
     });
 
 });

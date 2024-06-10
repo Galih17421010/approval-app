@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\FinanceController;
+use App\Http\Controllers\ManagerController;
 use App\Http\Controllers\PengajuanController;
 use Illuminate\Support\Facades\Route;
 
@@ -15,5 +17,12 @@ Route::post('/ajukan', [PengajuanController::class, 'store']);
 Route::get('/edit/{id}', [PengajuanController::class, 'edit']);
 Route::put('/update/{id}', [PengajuanController::class, 'update']);
 Route::delete('/delete/{id}', [PengajuanController::class, 'destroy']);
+
+Route::post('/approve/{id}', [ManagerController::class, 'store']);
+Route::post('/reject/{id}', [ManagerController::class, 'reject']);
+
+Route::post('/finance-approve/{id}', [FinanceController::class, 'store']);
+Route::post('/finance-reject/{id}', [FinanceController::class, 'reject']);
+Route::post('/finance-bukti/{id}', [FinanceController::class, 'update']);
 
 

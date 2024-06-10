@@ -2,61 +2,78 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Manager;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ManagerController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+    
+    
     public function index()
     {
         //
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    
+    public function store(string $id)
     {
-        //
+        $manager = new Manager ([
+            'pengajuan_id' => $id,
+            'manager' => 'Approved',
+            'action_by' => Auth::user()->id,
+            'action_at' => Carbon::now()
+        ]);
+        $manager->timestamps = false;
+        $manager->save();
+
+
+        return response()->json([
+            'success' => true,
+            // 'message' => 'Barang Berhasil Diajukan!',
+            'data' => $manager  
+        ]);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    
+    public function reject(Request $request, string $id)
     {
-        //
+        $manager = new Manager ([
+            'pengajuan_id' => $id,
+            'manager' => 'Rejected',
+            'alasan_manager' => $request->alasan_manager,
+            'action_by' => Auth::user()->id,
+            'action_at' => Carbon::now()
+        ]);
+        $manager->timestamps = false;
+        $manager->save();
+
+
+        return response()->json([
+            'success' => true,
+            // 'message' => 'Barang Berhasil Diajukan!',
+            'data' => $manager  
+        ]);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
+    
     public function edit(string $id)
     {
         //
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
+    
     public function update(Request $request, string $id)
     {
         //
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
+    
     public function destroy(string $id)
     {
         //

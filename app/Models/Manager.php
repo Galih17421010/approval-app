@@ -5,10 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class StatusPengajuan extends Model
+class Manager extends Model
 {
     use HasFactory;
-
-    protected $table = 'status_pengajuans';
+    protected $table = 'managers';
     protected $guarded = [];
 }
