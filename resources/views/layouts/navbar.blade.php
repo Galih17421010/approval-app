@@ -1,6 +1,6 @@
 
   <!-- Navbar -->
-  <nav class="main-header navbar navbar-expand-md navbar-dark">
+  <nav class="main-header navbar navbar-expand navbar-dark">
     <div class="container">
       <span class="navbar-brand brand-text font-weight-light">
         <i class="fa fa-globe"></i>
@@ -14,7 +14,7 @@
           @else     
           <li class="nav-item dropdown">
               <a class="nav-link" data-toggle="dropdown" href="#">
-                      {{ Auth::user()->name }}
+                  {{ Auth::user()->name }} 
               </a>
               <div class="dropdown-menu dropdown-menu-sm dropdown-menu-right">
                   {{-- <div class="dropdown-divider"></div> --}}

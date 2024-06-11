@@ -8,4 +8,8 @@
     <link rel="stylesheet" href="{{asset('assets/plugins/sweetalert2/sweetalert2.min.css')}}">
     <!-- Datatables -->
     <link rel="stylesheet" href="{{asset('assets/css/datatables.min.css')}}">
+    <!-- Fancybox -->    
+    <link rel="stylesheet" href="{{asset('assets/css/fancybox.css')}}">
+
+
     

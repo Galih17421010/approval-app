@@ -17,12 +17,13 @@ Route::post('/ajukan', [PengajuanController::class, 'store']);
 Route::get('/edit/{id}', [PengajuanController::class, 'edit']);
 Route::put('/update/{id}', [PengajuanController::class, 'update']);
 Route::delete('/delete/{id}', [PengajuanController::class, 'destroy']);
+Route::get('/detail/{id}', [PengajuanController::class, 'detail']);
 
 Route::post('/approve/{id}', [ManagerController::class, 'store']);
 Route::post('/reject/{id}', [ManagerController::class, 'reject']);
 
 Route::post('/finance-approve/{id}', [FinanceController::class, 'store']);
 Route::post('/finance-reject/{id}', [FinanceController::class, 'reject']);
-Route::post('/finance-bukti/{id}', [FinanceController::class, 'update']);
+Route::post('/finance-upload/{id}', [FinanceController::class, 'upload']);
 
 

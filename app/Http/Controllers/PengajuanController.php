@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Bukti;
 use App\Models\Manager;
 use App\Models\Pengajuan;
+use App\Models\View\VwTracking;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -40,12 +42,6 @@ class PengajuanController extends Controller
         ]);
     }
 
-    public function detail(string $id)
-    {
-        $pengajuan = Pengajuan::find($id);
-        return response()->json(['pengajuan' => $pengajuan]);
-    }
-
     public function edit(string $id)
     {
         $data = Pengajuan::find($id);
@@ -68,14 +64,142 @@ class PengajuanController extends Controller
         Pengajuan::destroy($id);
         return response()->json(['status' => "success"]);
     }
-    
+
+    public function detail($id)
+    {
+        $data = new VwTracking();
+        $d = $data->find($id);
+
+        if($d->manager == 'Approved'){
+            $manager = '<div class="vertical-timeline-item vertical-timeline-element">
+                            <span class="vertical-timeline-element-icon bounce-in">
+                                <i class="badge badge-dot badge-dot-xl badge-success"> </i>
+                            </span>
+                            <div class="vertical-timeline-element-content bounce-in">
+                                <h4 class="timeline-title text-success">Disetujui Oleh Manager</h4>
+                                <p>Pengajuan disetujui oleh Manager pada <b class="text-success"> '.date('d-m-Y', strtotime($d->manager_created)).'</b><br>
+                                <span class="vertical-timeline-element-date text-success">'.date('H:i', strtotime($d->manager_created)).' WIB</span>
+                            </div>
+                        </div>';
+        }elseif($d->manager == 'Rejected'){
+            $manager = '<div class="vertical-timeline-item vertical-timeline-element">
+                            <span class="vertical-timeline-element-icon bounce-in">
+                                <i class="badge badge-dot badge-dot-xl badge-danger"> </i>
+                            </span>
+                            <div class="vertical-timeline-element-content bounce-in">
+                                <h4 class="timeline-title text-danger">Di Tolak Oleh Manager</h4>
+                                <p>Pengajuan ditolak oleh Manager pada <b class="text-danger"> '.date('d-m-Y', strtotime($d->manager_created)).'</b> <br>
+                                <b>Alasan : </b>'.$d->alasan_manager.'</p>
+                                <span class="vertical-timeline-element-date text-danger">'.date('H:i', strtotime($d->manager_created)).' WIB</span>
+                            </div>
+                        </div>';
+        }else{
+            $manager = '<div class="vertical-timeline-item vertical-timeline-element">
+                            <span class="vertical-timeline-element-icon bounce-in">
+                                <i class="badge badge-dot badge-dot-xl badge-info"> </i>
+                            </span>
+                            <div class="vertical-timeline-element-content bounce-in">
+                                <h4 class="timeline-title text-info">Menunggu Persetujuan Manager</h4>
+                            </div>
+                        </div>';
+        }
+
+        if($d->finance == 'Approved'){
+            $finance = '<div class="vertical-timeline-item vertical-timeline-element">
+                            <span class="vertical-timeline-element-icon bounce-in">
+                                <i class="badge badge-dot badge-dot-xl badge-success"> </i>
+                            </span>
+                            <div class="vertical-timeline-element-content bounce-in">
+                                <h4 class="timeline-title text-success">Disetujui Oleh Finance</h4>
+                                <p>Pengajuan dibayarkan oleh Finance pada <b class="text-success"> '.date('d-m-Y', strtotime($d->finance_create)).'</b><br>
+                                <span class="vertical-timeline-element-date text-success">'.date('H:i', strtotime($d->finance_create)).' WIB</span>
+                            </div>
+                        </div>';
+        }elseif($d->finance == 'Rejected'){
+            $finance = '<div class="vertical-timeline-item vertical-timeline-element">
+                            <span class="vertical-timeline-element-icon bounce-in">
+                                <i class="badge badge-dot badge-dot-xl badge-danger"> </i>
+                            </span>
+                            <div class="vertical-timeline-element-content bounce-in">
+                                <h4 class="timeline-title text-danger">Di Tolak Oleh Finance</h4>
+                                <p>Pengajuan ditolak oleh Finance pada<b class="text-danger"> '.date('d-m-Y', strtotime($d->finance_create)).'</b><br>
+                                <b>Alasan : </b> '.$d->alasan_finance.'</p>
+                                <span class="vertical-timeline-element-date text-danger">'.date('H:i', strtotime($d->finance_create)).' WIB</span>
+                            </div>
+                        </div>';
+        }elseif($d->manager == null || $d->manager == 'Rejected' && $d->finance == null){
+            $finance = '';
+        }else {
+            $finance = '<div class="vertical-timeline-item vertical-timeline-element">
+                            <span class="vertical-timeline-element-icon bounce-in">
+                                <i class="badge badge-dot badge-dot-xl badge-info"> </i>
+                            </span>
+                            <div class="vertical-timeline-element-content bounce-in">
+                                <h4 class="timeline-title text-info">Menunggu Persetujuan Finance</h4>
+                            </div>
+                        </div>';
+        }
+
+        if ($d->manager == 'Approved' && $d->finance == 'Approved' && $d->bukti_transfer == null) {
+            $bayar = '<div class="vertical-timeline-item vertical-timeline-element">
+                        <span class="vertical-timeline-element-icon bounce-in">
+                            <i class="badge badge-dot badge-dot-xl badge-info"> </i>
+                        </span>
+                        <div class="vertical-timeline-element-content bounce-in">
+                            <h4 class="timeline-title text-info">Menunggu Dibayarkan Oleh Finance</h4>
+                        </div>
+                    </div>';
+        }elseif($d->manager == null || $d->manager == 'Rejected' || $d->manager == 'Approved' && $d->finance == null || $d->finance == 'Rejected' && $d->bukti_transfer == null){
+            $bayar = '';
+        }else{
+            $bayar = '<div class="vertical-timeline-item vertical-timeline-element">
+                        <span class="vertical-timeline-element-icon bounce-in">
+                            <i class="badge badge-dot badge-dot-xl badge-success"> </i>
+                        </span>
+                        <div class="vertical-timeline-element-content bounce-in">
+                            <h4 class="timeline-title text-success">Pengajuan Telah Dibayarkan oleh Finance</h4>
+                            <p>Pengajuan dibayarkan oleh Finance pada <b class="text-success"> '.date('d-m-Y', strtotime($d->finance_update)).'</b><br>
+                                <a href="bukti/'.$d->bukti_transfer.'" data-fancybox>Lihat Bukti Pembayaran</a></p>
+                            <span class="vertical-timeline-element-date text-success">'.date('H:i', strtotime($d->finance_update)).' WIB</span>
+                        </div>
+                    </div>';
+        }    
+        
+
+
+        $html = '<div class="vertical-timeline vertical-timeline--animate vertical-timeline--one-column">
+                    '.$bayar.'
+                    '.$finance.'
+                    '.$manager.'                    
+                    <div class="vertical-timeline-item vertical-timeline-element">
+                        <span class="vertical-timeline-element-icon bounce-in">
+                            <i class="badge badge-dot badge-dot-xl badge-success"> </i>
+                        </span>
+                        <div class="vertical-timeline-element-content bounce-in">
+                            <h4 class="timeline-title text-success">Pengajuan Berhasil Diajukan</h4>
+                            <p>Pengajuan Dibuat Oleh Officer Pada<b class="text-success"> '.date('d-m-Y', strtotime($d->updated_at)).'</b></p>
+                            <span class="vertical-timeline-element-date text-success">'.date('H:i', strtotime($d->updated_at)).' WIB</span>
+                        </div>
+                    </div>
+                </div>';
+
+        return response()->json(['html' => $html]);
+    }
+
+    public function getdata()
+    {
+        return DB::table('pengajuans')
+        ->select('*','pengajuans.id as id', 'pengajuans.created_at','pengajuans.updated_at','finances.created_at as finance_create', 'finances.updated_at as finance_update', 'users.name')
+        ->leftJoin('managers','pengajuans.id','=','managers.pengajuan_id')
+        ->leftJoin('finances','pengajuans.id','=','finances.pengajuan_finance_id')
+        ->leftJoin('users','pengajuans.user_id','=','users.id')
+        ->orderBy('pengajuans.id','DESC')->get();
+    }
+
     public function table()
     {
-        $data = DB::table('pengajuans')->select('*','pengajuans.id as id')
-                    ->leftJoin('managers','pengajuans.id','=','managers.pengajuan_id')
-                    ->leftJoin('finances','pengajuans.id','=','finances.pengajuan_finance_id')
-                    ->orderBy('pengajuans.id','DESC')->get();
-        
+        $data = $this->getdata();
+
         return DataTables::of($data)
             ->addColumn('data', function($d){
                 if (Auth::user()->role == 'Manager' && $d->manager == null) {
@@ -85,8 +209,8 @@ class PengajuanController extends Controller
                 }elseif (Auth::user()->role == 'Finance' && $d->manager == 'Approved' && $d->finance == null) {
                     $button = '<button id="reject-finance" data-id="'.$d->id.'" class="btn btn-sm btn-danger">Reject</button>&nbsp;
                                 <button id="approve-finance" data-id="'.$d->id.'" class="btn btn-sm btn-success">Approve</button>';
-                }elseif($d->finance == 'Approved'){
-                    $button = '<button id="bukti-finance" data-id="'.$d->id.'" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#modalBukti" data-keyboard="false" data-backdrop="static">
+                }elseif(Auth::user()->role == 'Finance' && $d->finance == 'Approved' && $d->bukti_transfer == null){
+                    $button = '<button id="bukti-finance" data-id="'.$d->id.'" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#uploadBuktiBayar" data-keyboard="false" data-backdrop="static">
                                 Upload Bukti Pembayaran
                                 </button>';
                 }else{
@@ -99,7 +223,31 @@ class PengajuanController extends Controller
                     $dropdown = 'disabled';
                 }
 
-                $card = '<div class="card card-primary card-outline" id='.$d->id.'>
+                if($d->bukti_transfer == null){
+                    if ($d->manager == null && $d->finance == null) {
+                        $status = '<span class="text-success"><i class="far fa-check-circle"></i> Pengajuan Berhasil Diajukan</span>';
+                        $cardhead = 'card-primary';
+                    }elseif($d->manager == 'Rejected'){
+                        $status = '<span class="text-danger"><i class="far fa-times-circle"></i> Pengajuan Ditolak oleh Manager</span>';
+                        $cardhead = 'card-danger';
+                    }elseif($d->manager == 'Approved' && $d->finance == null){
+                        $status = '<span class="text-success"><i class="far fa-check-circle"></i> Pengajuan Disetujui oleh Manager</span>';
+                        $cardhead = 'card-primary';
+                    }elseif($d->manager == 'Approved' && $d->finance == 'Rejected'){
+                        $status = '<span class="text-danger"><i class="far fa-times-circle"></i> Pengajuan Ditolak oleh Finance</span>';
+                        $cardhead = 'card-danger';
+                    }elseif($d->manager == 'Approved' && $d->finance == 'Approved'){
+                        $status = '<span class="text-success"><i class="far fa-check-circle"></i> Pengajuan Disetujui oleh Finance</span>';
+                        $cardhead = 'card-success';
+                    }
+                }else{
+                    $status = '<span class="text-success"><i class="far fa-check-circle"></i> Pengajuan Telah Dibayarkan oleh Finance</span>';
+                    $cardhead = 'card-success';
+                }
+                    
+                
+
+                $card = '<div class="card '.$cardhead.' card-outline" id='.$d->id.'>
                             <div class="card-header">
                                 <h5 class="card-title m-0">Pengajuan - '.$d->nama_barang.'</h5>
                                 <div class="card-tools">
@@ -117,17 +265,17 @@ class PengajuanController extends Controller
                             <div class="card-body">
                                 <div class="row">
                                     <div class="col-md-6">
-                                        <h6>Diajukan oleh '.$d->user_id.' pada '.date('d-m-Y H:m', strtotime($d->created_at)).'</h6>
+                                        <h6>Diajukan oleh <b>'.$d->name.'</b> pada '.date('d-m-Y H:i', strtotime($d->created_at)).' WIB</h6>
                                         <p class="card-text"><b> Keterangan :</b> <br>'.$d->alasan_pengajuan.'</p>
                                         </div>
                                     <div class="col-md-6">
-                                        <p class="text-right">Harga Satuan <b>Rp '.$d->harga_satuan.'</b> <br> Sejumlah <b>'.$d->qty.'</b> Buah</p>
-                                        <h4 class="float-right">Total Rp '.$d->total_harga.'</h4>
+                                        <p class="text-right">Harga Satuan <b>Rp '.number_format($d->harga_satuan,0,',','.').'</b> <br> Jumlah <b>'.$d->qty.'</b></p>
+                                        <h4 class="float-right">Total Rp '.number_format($d->total_harga,0,',','.').'</h4>
                                     </div>
                                 </div>
                                 <center>
                                     <button class="btn btn-sm btn-block btn-light" id="btn-detail" data-id="'.$d->id.'" data-toggle="modal" data-target="#detailPengajuan" data-keyboard="false" data-backdrop="static">
-                                        <span class="text-success"><i class="far fa-check-circle"></i> Menunggu Persetujuan Manager</span>
+                                        '.$status.'
                                     </button> 
                                 </center>
                             </div>
@@ -141,9 +289,5 @@ class PengajuanController extends Controller
             })
             ->rawColumns(['data'])
             ->make(true);
-    }
-
-    public function upload(Request $request, $id){
-        
     }
 }

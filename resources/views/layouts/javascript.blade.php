@@ -8,3 +8,5 @@
 <script src="{{asset('assets/plugins/sweetalert2/sweetalert2.min.js')}}"></script>
 <!-- Datatables -->
 <script src="{{asset('assets/js/datatables.min.js')}}"></script>
+<!-- Fancybox -->
+<script src="{{asset('assets/js/fancybox.umd.js')}}"></script>
