@@ -6,7 +6,7 @@ use App\Models\Finance;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use File;
+
 class FinanceController extends Controller
 {
     public function __construct()
@@ -64,34 +64,25 @@ class FinanceController extends Controller
         ]);
     }
 
-    
-    public function edit(string $id)
-    {
-        //
-    }
+    public function upload(Request $request, $id){
 
-    
-    public function update(Request $request, $id)
-    {   
         $request->validate([
-            'bukti_transfer.*' => 'mimes:doc,pdf,docx,zip,jpeg,png,jpg,gif,svg',
+            'bukti' => 'required|mimes:jpg,jpeg,png,pdf,|max:2048',
         ]);
+                
+        $buktiName=rand().'.'.$request->file('bukti')->extension();
+        $request->file('bukti')->move(public_path('bukti'), $buktiName);
 
-        $bukti= $request->file('bukti_transfer');
-        $buktiNama = rand().'.'.$bukti->getClientOriginalExtension();
-        $bukti->move(public_path('bukti'), $buktiNama);
-      
-        $bukti = Finance::where('pengajuan_finance_id',$id)->update([
-            'bukti_transfer' => $buktiNama
+        $finance = Finance::where('pengajuan_finance_id','=',$id)->update([
+            'bukti_transfer' => $buktiName,
+        ]);      
+
+        return response()->json([
+            'success'=> true,
+            'message' => 'Bukti berhasil di Upload!',
+            'data'=>$finance
         ]);
-        // $bukti->bukti_transfer = $buktiNama;
-        // $bukti->update([
-        //     'bukti_transfer' => $buktiNama
-        // ]);
-
-        return response()->json(['status' => "success", 'message' => 'File Berhasil di Upload']);
     }
-
     
     public function destroy(string $id)
     {
