@@ -11,14 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('managers', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('pengajuan_id')->constrained()->onDelete('cascade');
-            $table->enum('manager', ['Approved', 'Rejected']);
-            $table->text('alasan_manager')->nullable();
-            $table->foreignId('action_by')->constrained('users')->onDelete('cascade');
-            $table->timestamp('action_at')->useCurrent();
-        });
+        if(!Schema::hasTable('managers')){
+            Schema::create('managers', function (Blueprint $table) {
+                $table->id();
+                $table->foreignId('pengajuan_id')->constrained()->onDelete('cascade');
+                $table->enum('manager', ['Approved', 'Rejected']);
+                $table->text('alasan_manager')->nullable();
+                $table->foreignId('action_by')->constrained('users')->onDelete('cascade');
+                $table->timestamp('action_at')->useCurrent();
+            });
+        }
     }
 
     /**

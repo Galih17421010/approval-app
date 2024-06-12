@@ -11,16 +11,18 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('finances', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('pengajuan_finance_id')->constrained()->onDelete('cascade');
-            $table->enum('finance', ['Approved', 'Rejected']);
-            $table->text('alasan_finance')->nullable();
-            $table->string('bukti_transfer')->nullable();
-            $table->foreignId('action_by')->constrained('users')->onDelete('cascade');
-            $table->timestamp('action_at')->useCurrent();
-            $table->timestamps();
-        });
+        if(!Schema::hasTable('finances')){
+            Schema::create('finances', function (Blueprint $table) {
+                $table->id();
+                $table->foreignId('pengajuan_finance_id')->constrained()->onDelete('cascade');
+                $table->enum('finance', ['Approved', 'Rejected']);
+                $table->text('alasan_finance')->nullable();
+                $table->string('bukti_transfer')->nullable();
+                $table->foreignId('action_by')->constrained('users')->onDelete('cascade');
+                $table->timestamp('action_at')->useCurrent();
+                $table->timestamps();
+            });
+        }
     }
 
     /**

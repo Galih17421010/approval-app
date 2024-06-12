@@ -299,6 +299,11 @@
             ajax: "{{url('/data')}}",
             order:[['id','DESC']],
             columns: [{data: 'nama_barang'},
+              {data: 'alasan_pengajuan'},
+              {data: 'qty'},
+              {data: 'harga_satuan'},
+              {data: 'total_harga'},
+              {data: 'updated_at'},
               {data: 'data', "defaultContent": ""}
             ],
               language: {
@@ -308,7 +313,12 @@
               zeroRecords:    "Tidak Ada Data Yang Ditemukan",
             },
             columnDefs: [
-                { target: 0, visible: false}
+                { target: 0, visible: false},
+                { target: 1, visible: false},
+                { target: 2, visible: false},
+                { target: 3, visible: false},
+                { target: 4, visible: false},
+                { target: 5, visible: false},
             ],
             // paging: false,
             // scrollCollapse: true,

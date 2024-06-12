@@ -6,6 +6,7 @@ use App\Models\Bukti;
 use App\Models\Manager;
 use App\Models\Pengajuan;
 use App\Models\View\VwTracking;
+use App\Models\ViewTracking;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -67,7 +68,8 @@ class PengajuanController extends Controller
 
     public function detail($id)
     {
-        $data = new VwTracking();
+        $data = new ViewTracking();
+
         $d = $data->find($id);
 
         if($d->manager == 'Approved'){
@@ -249,7 +251,7 @@ class PengajuanController extends Controller
 
                 $card = '<div class="card '.$cardhead.' card-outline" id='.$d->id.'>
                             <div class="card-header">
-                                <h5 class="card-title m-0">Pengajuan - '.$d->nama_barang.'</h5>
+                                <h5 class="card-title m-0 text-center">Pengajuan - '.$d->nama_barang.'</h5>
                                 <div class="card-tools">
                                     <button type="button" class="btn btn-tool dropdown-toggle '.$dropdown.'" data-toggle="dropdown">
                                         <i class="fas fa-cog"></i>
